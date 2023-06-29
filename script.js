@@ -1,37 +1,22 @@
-//your JS code here. If required.
-// Get form elements
-const fontSizeInput = document.getElementById("fontsize");
-const fontColorInput = document.getElementById("fontcolor");
-const saveButton = document.querySelector("input[type='submit']");
-
-// Load saved preferences from cookies
-if (document.cookie) {
-const preferences = document.cookie
-.split(";")
-.reduce((acc, cookie) => {
-const [key, value] = cookie.trim().split("=");
-acc[key] = decodeURIComponent(value);
-return acc;
-}, {});
-
-if (preferences.fontSize) {
-fontSizeInput.value = preferences.fontSize;
-document.documentElement.style.setProperty("--fontsize", preferences.fontSize + "px");
-}
-
-if (preferences.fontColor) {
-fontColorInput.value = preferences.fontColor;
-document.documentElement.style.setProperty("--fontcolor", preferences.fontColor);
-}
-}
-
-// Save preferences to cookies on form submit
-saveButton.addEventListener("click", (event) => {
-event.preventDefault();
-const fontSize = fontSizeInput.value;
-const fontColor = fontColorInput.value;
-document.documentElement.style.setProperty("--fontsize", fontSize + "px");
-document.documentElement.style.setProperty("--fontcolor", fontColor);
-document.cookie = `fontSize=${encodeURIComponent(fontSize)}; expires=${new Date(Date.now() + 86400000).toUTCString()}`;
-document.cookie = `fontColor=${encodeURIComponent(fontColor)}; expires=${new Date(Date.now() + 86400000).toUTCString()}`;
+const form = document.querySelector("form");
+ 
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const fontsize = document.querySelector("#fontsize").value;
+  const fontcolor = document.querySelector("#fontcolor").value;
+  document.documentElement.style.setProperty("--fontsize", `${fontsize}px`);
+  document.documentElement.style.setProperty("--fontcolor", `${fontcolor}`);
+  document.cookie = `fontsize=${fontsize};max-age=31536000`;
+  document.cookie = `fontcolor=${fontcolor};max-age=31536000`;
 });
+ 
+const cookieString = document.cookie;
+const cookies = cookieString.split(";");
+for (const cookie of cookies) {
+  const [name, value] = cookie.split("=");
+  if (name.trim() === "fontsize") {
+    document.documentElement.style.setProperty("--fontsize", `${value}px`);
+  } else if (name.trim() === "fontcolor") {
+    document.documentElement.style.setProperty("--fontcolor", `${value}`);
+  }
+}
